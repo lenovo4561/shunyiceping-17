@@ -1,0 +1,325 @@
+<template>
+  <div class="page">
+    <list class="list-container">
+      <!-- Header Section -->
+      <list-item type="header" class="header-item">
+        <stack class="top-banner">
+          <image class="banner-bg" src="/assets/img/cepingfenlei-bg.png"></image>
+          <div class="banner-content">
+            <!-- Title fallbacks if image is missing, though user said bg has it, or implied use bg. 
+                 The screenshot shows "测评分类". 
+                 I'll add text just in case. -->
+            <div class="title-container">
+               <text class="page-title">测评分类</text>
+            </div>
+          </div>
+        </stack>
+
+        <!-- Category Tabs -->
+        <div class="tabs-container">
+          <div class="tab-btn {{activeCategory === 'shiye' ? 'tab-active' : ''}}" onclick="switchCategory" category="shiye">
+            <text class="tab-text {{activeCategory === 'shiye' ? 'tab-text-active' : ''}}">事业</text>
+          </div>
+          <div class="tab-btn {{activeCategory === 'aiqing' ? 'tab-active' : ''}}" onclick="switchCategory" category="aiqing">
+            <text class="tab-text {{activeCategory === 'aiqing' ? 'tab-text-active' : ''}}">爱情</text>
+          </div>
+          <div class="tab-btn {{activeCategory === 'yuanfen' ? 'tab-active' : ''}}" onclick="switchCategory" category="yuanfen">
+            <text class="tab-text {{activeCategory === 'yuanfen' ? 'tab-text-active' : ''}}">缘分</text>
+          </div>
+          <div class="tab-btn {{activeCategory === 'xingge' ? 'tab-active' : ''}}" onclick="switchCategory" category="xingge">
+            <text class="tab-text {{activeCategory === 'xingge' ? 'tab-text-active' : ''}}">性格</text>
+          </div>
+        </div>
+      </list-item>
+
+      <!-- Dynamic List -->
+      <block for="{{(index, item) in currentList}}">
+        <list-item type="item" class="list-item">
+          <div class="item-card">
+            <image class="item-img" src="{{item.image}}"></image>
+            <div class="item-content">
+              <text class="item-title">{{item.title}}</text>
+              
+              <div class="item-footer">
+                <div class="fire-info">
+                  <image class="fire-icon" src="/assets/img/remenceping.png"></image>
+                  <text class="fire-text">{{item.count}} 人已测试</text>
+                </div>
+                <div class="item-btn" onclick="startTest" tid="{{index}}">
+                  <image class="item-btn-text" src="/assets/img/lkcs.png"></image>
+                  <image class="item-btn-icon" src="/assets/img/yanjing3.png"></image>
+                </div>
+              </div>
+            </div>
+          </div>
+        </list-item>
+      </block>
+      
+      <list-item type="bottom" class="bottom-spacer"></list-item>
+    </list>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+
+export default {
+  data: {
+    activeCategory: 'aiqing',
+    shiyeList: [
+      { id: 's1', title: '「事业动力源解码」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/1.jpg' },
+      { id: 's2', title: '「职场抗压韧性」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/2.jpg' },
+      { id: 's3', title: '「事业决策智慧」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/3.jpg' },
+      { id: 's4', title: '「职场协作力画像」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/4.jpg' },
+      { id: 's5', title: '「事业成长力潜能」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/5.jpg' },
+      { id: 's6', title: '「职场领导力测评」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/6.jpg' },
+      { id: 's7', title: '「职业规划方向」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/7.jpg' },
+      { id: 's8', title: '「团队协作能力」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/8.jpg' },
+      { id: 's9', title: '「创新思维能力」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/9.jpg' },
+      { id: 's10', title: '「职场沟通技巧」测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/sy/10.jpg' }
+    ],
+    aiqingList: [
+      { id: 'a1', title: '浪漫主义爱情契合度测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/1.jpg' },
+      { id: 'a2', title: '现实主义爱情适配度测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/2.jpg' },
+      { id: 'a3', title: '成长型爱情互助力测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/3.jpg' },
+      { id: 'a4', title: '依恋型爱情安全感测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/4.jpg' },
+      { id: 'a5', title: '激情型爱情保鲜度测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/5.jpg' },
+      { id: 'a6', title: '长久型爱情经营度测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/6.jpg' },
+      { id: 'a7', title: '理想型爱情期待值测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/7.jpg' },
+      { id: 'a8', title: '成熟型爱情稳定性测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/8.jpg' },
+      { id: 'a9', title: '平衡型爱情和谐度测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/9.jpg' },
+      { id: 'a10', title: '未来型爱情规划力测评', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/aq/10.jpg' }
+    ],
+    yuanfenList: [
+      { id: 'y1', title: '宿命感缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/1.jpg' },
+      { id: 'y2', title: '成长型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/2.jpg' },
+      { id: 'y3', title: '社交型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/3.jpg' },
+      { id: 'y4', title: '灵魂共鸣型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/4.jpg' },
+      { id: 'y5', title: '治愈型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/5.jpg' },
+      { id: 'y6', title: '奇遇型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/6.jpg' },
+      { id: 'y7', title: '默契型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/7.jpg' },
+      { id: 'y8', title: '互补型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/8.jpg' },
+      { id: 'y9', title: '惊喜型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/9.jpg' },
+      { id: 'y10', title: '深度型缘分测评题', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/yf/10.jpg' }
+    ],
+    xinggeList: [
+      { id: 'x1', title: '测一测你的"情绪调色盘"人格', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/1.jpg' },
+      { id: 'x2', title: '你的"社交拼图"人格是什么样？', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/2.jpg' },
+      { id: 'x3', title: '测一测你的"决策指南针"人格', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/3.jpg' },
+      { id: 'x4', title: '你的"压力应对"人格图鉴', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/4.jpg' },
+      { id: 'x5', title: '测一测你的"生活节奏"人格', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/5.jpg' },
+      { id: 'x6', title: '你的"思维模式"人格类型', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/6.jpg' },
+      { id: 'x7', title: '测一测你的"行动力"人格', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/7.jpg' },
+      { id: 'x8', title: '你的"沟通风格"人格画像', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/8.jpg' },
+      { id: 'x9', title: '测一测你的"学习方式"人格', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/9.jpg' },
+      { id: 'x10', title: '你的"时间管理"人格类型', count: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/fl/xg/10.jpg' }
+
+    ]
+  },
+  computed: {
+    currentList() {
+      switch(this.activeCategory) {
+        case 'shiye': return this.shiyeList
+        case 'aiqing': return this.aiqingList
+        case 'yuanfen': return this.yuanfenList
+        case 'xingge': return this.xinggeList
+        default: return this.aiqingList
+      }
+    }
+  },
+  switchCategory(evt) {
+    const category = evt.target.attr.category
+    if (category) {
+      this.activeCategory = category
+    }
+  },
+  startTest(evt) {
+    const index = parseInt(evt.target.attr.tid)
+    router.push({
+      uri: 'pages/TestQuestions',
+      params: {
+        category: this.activeCategory,
+        testIndex: index
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.list-container {
+  flex: 1;
+}
+
+.header-item {
+  flex-direction: column;
+}
+
+/* Top Banner */
+.top-banner {
+  width: 100%;
+  height: 480px;
+}
+
+.banner-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-content {
+  width: 100%;
+  height: 100%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 120px;
+  padding-left: 60px;
+}
+
+.title-container {
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 50px;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Tabs */
+.tabs-container {
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 20px;
+  background-color: #ffffff;
+  margin: 0 30px;
+  border-radius: 40px;
+  margin-top: -60px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.05);
+}
+
+.tab-btn {
+  padding: 12px 30px;
+  border-radius: 35px;
+  background-color: #Fce4ec; 
+  margin: 0 5px;
+}
+
+/* Specific colors for inactive tabs to match screenshot style if possible */
+.tab-btn {
+    background-color: #F8BBD0; /* Light pinkish */
+    background-color: rgba(255, 192, 203, 0.3);
+}
+
+.tab-active {
+  background-color: #FF69B4; /* Hot Pink */
+}
+
+.tab-text {
+  font-size: 28px;
+  color: #333333;
+  font-weight: bold;
+}
+
+.tab-text-active {
+  color: #ffffff;
+}
+
+/* List Item */
+.list-item {
+  background-color: #ffffff;
+  padding: 30px;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+}
+
+.item-card {
+  flex-direction: row;
+  width: 100%;
+}
+
+.item-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 20px;
+  object-fit: cover;
+  background-color: #eeeeee;
+  margin-right: 25px;
+}
+
+.item-content {
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 180px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.item-title {
+  font-size: 30px;
+  color: #333333;
+  lines: 2;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+
+.item-footer {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fire-info {
+  flex-direction: row;
+  align-items: center;
+}
+
+.fire-icon {
+  width: 25px;
+  height: 25px;
+  margin-right: 8px;
+  object-fit: contain;
+}
+
+.fire-text {
+  font-size: 24px;
+  color: #999999;
+}
+
+.item-btn {
+  background-color: #00E5FF;
+  border-radius: 30px;
+  padding: 10px 20px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item-btn-text {
+  height: 26px;
+  object-fit: contain;
+}
+
+.item-btn-icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  margin-left: 8px;
+}
+
+.bottom-spacer {
+    height: 100px;
+}
+</style>

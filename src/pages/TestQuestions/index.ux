@@ -1,0 +1,298 @@
+<template>
+  <div class="page">
+    <!-- 返回按钮 -->
+    <div class="back-btn" onclick="goBack">
+      <image class="back-icon" src="/assets/img/back.png"></image>
+    </div>
+
+    <!-- 顶部标题栏 -->
+    <stack class="top-header">
+      <image class="header-bg" src="/assets/img/xiangqing-bg.png"></image>
+      <text class="header-title">{{testTitle}}</text>
+    </stack>
+
+    <!-- 题目容器 -->
+    <div class="content-container">
+      <!-- 题号显示 -->
+      <div class="question-number">
+        <text class="number-text">第 </text>
+        <text class="number-highlight">{{currentQuestion + 1}}</text>
+        <text class="number-text"> /5 题</text>
+      </div>
+
+      <!-- 题目内容 -->
+      <div class="question-box">
+        <text class="question-text">{{questionData.question}}</text>
+      </div>
+
+      <!-- 选项列表 -->
+      <div class="options-container">
+        <block for="{{(index, option) in questionData.options}}">
+          <div class="{{selectedOption === index ? 'option-item selected' : 'option-item'}}" 
+               onclick="selectOption(index)">
+            <text class="option-text">{{option.text}}</text>
+          </div>
+        </block>
+      </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-btn-container">
+      <div class="{{selectedOption !== -1 ? 'next-btn active' : 'next-btn'}}" 
+           onclick="nextQuestion">
+        <text class="btn-text">{{currentQuestion === 4 ? '查看结果' : '下一题'}}</text>
+        <image class="btn-icon" src="/assets/img/yanjing3.png"></image>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+import { questionsData as shiyeData } from '../../assets/data/shiye.js'
+import { questionsData as aiqingData } from '../../assets/data/aiqing.js'
+import { questionsData as yuanfenData } from '../../assets/data/yuanfen.js'
+import { questionsData as xinggeData } from '../../assets/data/xingge.js'
+
+export default {
+  data: {
+    category: '',
+    testIndex: 0,
+    testTitle: '',
+    currentQuestion: 0,
+    selectedOption: -1,
+    answers: [],
+    questionData: {
+      question: '',
+      options: []
+    },
+    questionsData: null
+  },
+
+  onInit(query) {
+    // 获取传入的分类和测评索引
+    this.category = query.category || 'aiqing'
+    this.testIndex = parseInt(query.testIndex || 0)
+    
+    // 根据分类加载对应的数据
+    switch(this.category) {
+      case 'shiye':
+        this.questionsData = shiyeData
+        break
+      case 'aiqing':
+        this.questionsData = aiqingData
+        break
+      case 'yuanfen':
+        this.questionsData = yuanfenData
+        break
+      case 'xingge':
+        this.questionsData = xinggeData
+        break
+      default:
+        this.questionsData = aiqingData
+    }
+    
+    const testData = this.questionsData[this.testIndex]
+    
+    if (testData) {
+      this.testTitle = testData.title
+      this.loadQuestion()
+    }
+  },
+
+  loadQuestion() {
+    const testData = this.questionsData[this.testIndex]
+    if (testData && testData.questions[this.currentQuestion]) {
+      this.questionData = testData.questions[this.currentQuestion]
+    }
+  },
+
+  selectOption(index) {
+    this.selectedOption = index
+  },
+
+  nextQuestion() {
+    // 如果没有选择答案，不处理
+    if (this.selectedOption === -1) {
+      return
+    }
+
+    // 保存答案
+    const testData = this.questionsData[this.testIndex]
+    const selectedScore = testData.questions[this.currentQuestion].options[this.selectedOption].score
+    this.answers.push(selectedScore)
+
+    // 判断是否是最后一题
+    if (this.currentQuestion === 4) {
+      // 计算总分并跳转到结果页
+      const totalScore = this.answers.reduce((sum, score) => sum + score, 0)
+      router.push({
+        uri: 'pages/TestResult',
+        params: {
+          category: this.category,
+          testIndex: this.testIndex,
+          score: totalScore
+        }
+      })
+    } else {
+      // 下一题
+      this.currentQuestion++
+      this.selectedOption = -1
+      this.loadQuestion()
+    }
+  },
+
+  goBack() {
+    router.back()
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+/* 返回按钮 */
+.back-btn {
+  position: fixed;
+  left: 30px;
+  top: 30px;
+  width: 70px;
+  height: 70px;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 35px;
+  z-index: 100;
+}
+
+.back-icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* 顶部标题栏 */
+.top-header {
+  width: 100%;
+  height: 400px;
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-title {
+  font-size: 36px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 80px;
+  lines: 2;
+}
+
+/* 内容容器 */
+.content-container {
+  flex: 1;
+  flex-direction: column;
+  padding: 40px;
+  margin-top: -60px;
+  background-color: #ffffff;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+}
+
+/* 题号显示 */
+.question-number {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.number-text {
+  font-size: 28px;
+  color: #999999;
+}
+
+.number-highlight {
+  font-size: 48px;
+  color: #00e0ff;
+  font-weight: bold;
+  margin: 0 8px;
+}
+
+/* 题目内容 */
+.question-box {
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  margin-bottom: 40px;
+}
+
+.question-text {
+  font-size: 32px;
+  color: #333333;
+  line-height: 50px;
+}
+
+/* 选项列表 */
+.options-container {
+  flex-direction: column;
+  flex: 1;
+}
+
+.option-item {
+  padding: 30px 35px;
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  border: 3px solid transparent;
+}
+
+.selected {
+  background-color: #e6fbff;
+  border-color: #00e0ff;
+}
+
+.option-text {
+  font-size: 28px;
+  color: #333333;
+  line-height: 42px;
+}
+
+/* 底部按钮 */
+.bottom-btn-container {
+  padding: 30px 40px 50px;
+  background-color: #ffffff;
+}
+
+.next-btn {
+  width: 100%;
+  height: 100px;
+  background-color: #cccccc;
+  border-radius: 50px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.active {
+  background-color: #00e0ff;
+}
+
+.btn-text {
+  font-size: 32px;
+  color: #ffffff;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+}
+</style>

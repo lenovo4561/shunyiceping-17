@@ -1,0 +1,170 @@
+<template>
+  <stack class="page">
+    <image class="top-bg" src="/assets/img/shenghuochangshi-bg.png"></image>
+    
+    <div class="content-wrapper">
+      <div class="list-container">
+        <list class="content-list">
+          <list-item type="item" class="list-item" for="{{(index, item) in listData}}">
+            <div class="item-content" onclick="goToDetail" data-index="{{index}}">
+              <div class="item-text-col">
+                <text class="item-title">{{item.title}}</text>
+                <div class="item-info">
+                  <image class="info-icon" src="/assets/img/liulan.png"></image>
+                  <text class="info-text">{{item.views}} 人</text>
+                </div>
+              </div>
+              <image class="item-image" src="{{item.image}}" style="background-color: #eeeeee;"></image>
+            </div>
+            <!-- 分割线 -->
+            <div class="divider"></div>
+          </list-item>
+          <!-- 底部留白 -->
+          <list-item type="bottom-space" class="bottom-space"></list-item>
+        </list>
+      </div>
+    </div>
+  </stack>
+</template>
+
+<script>
+import router from '@system.router'
+
+export default {
+  data: {
+    listData: [
+      { title: '冰箱食材储存：这样放既保鲜又卫生', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/1.jpg' },
+      { title: '蔬菜焯水技巧：保留营养还去草酸', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/2.jpg' },
+      { title: '衣物顽固污渍去除：分类型处理更高效', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/3.jpg' },
+      { title: '正确刷牙方法：预防蛀牙和牙周炎', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/4.jpg' },
+      { title: '居家除螨：简单有效方法大集合', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/5.jpg' },
+      { title: '煮饺子不粘皮：掌握3个关键步骤', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/6.jpg' },
+      { title: '缓解眼部疲劳：日常护理小妙招', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/7.jpg' },
+      { title: '厨房油污清洁：天然清洁剂更安全', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/8.jpg' },
+      { title: '水果正确清洗：去除农药残留更安心', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/9.jpg' },
+      { title: '衣物晾晒：这样晒既杀菌又不变形', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/10.jpg' },
+      { title: '缓解轻微烫伤：紧急处理四步法', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/11.jpg' },
+      { title: '大米储存：防潮防虫小技巧', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/12.jpg' },
+      { title: '正确洗手：预防细菌感染的关键', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/13.jpg' },
+      { title: '居家防潮：梅雨季必备小妙招', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/14.jpg' },
+      { title: '煮米饭更香：关键步骤不能少', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/15.jpg' },
+      { title: '皮肤晒伤修复：紧急处理和日常护理', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/16.jpg' },
+      { title: '厨房刀具保养：锋利耐用的小技巧', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/17.jpg' },
+      { title: '缓解鼻塞：简单有效的居家方法', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/18.jpg' },
+      { title: '衣物收纳：节省空间又整齐的小妙招', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/19.jpg' },
+      { title: '预防厨房火灾：安全用电用气小常识', views: 2580, image: 'https://cdn.shijinzhuang.com/quick/shycp/cs/20.jpg' }
+    ]
+  },
+  onInit() {
+    // 可以在这里加载更多数据
+  },
+  goToDetail(evt) {
+    const index = evt.target.attr.dataIndex
+    router.push({
+      uri: 'pages/ChangshiDetail',
+      params: {
+        index: index
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  /* flex-direction: column; */
+  background-color: #f5f5f5;
+  height: 100%;
+}
+
+.top-bg {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+}
+
+.content-wrapper {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+
+.list-container {
+  flex: 1;
+  margin-top: 450px; /* 调整此值以控制白色区域开始的位置 */
+  margin-left: 30px;
+  margin-right: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  flex-direction: column;
+  padding-top: 30px;
+}
+
+.content-list {
+  flex: 1;
+  width: 100%;
+}
+
+.list-item {
+  flex-direction: column;
+  padding: 0 30px;
+}
+
+.item-content {
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 30px 0;
+}
+
+.item-text-col {
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-right: 20px;
+}
+
+.item-title {
+  font-size: 32px;
+  color: #333333;
+  font-weight: bold;
+  line-height: 44px;
+  lines: 2;
+  text-overflow: ellipsis;
+}
+
+.item-info {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.info-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-right: 8px;
+}
+
+.info-text {
+  font-size: 24px;
+  color: #999999;
+}
+
+.item-image {
+  width: 220px;
+  height: 160px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.divider {
+  height: 1px;
+  background-color: #f0f0f0;
+  width: 100%;
+}
+
+.bottom-space {
+  height: 200px; /* 为底部 TabBar 留出空间 */
+}
+</style>

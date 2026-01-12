@@ -1,0 +1,42 @@
+{
+  "app": {
+    "name": "顺意测评"
+  },
+  "tabs": {
+    "ceping": "测评",
+    "fenlei": "分类",
+    "changshi": "常识",
+    "mine": "我的"
+  },
+  "ceping": {
+    "title": "测评页面",
+    "desc": "这里是测评页面的内容"
+  },
+  "fenlei": {
+    "title": "分类页面",
+    "desc": "这里是分类页面的内容"
+  },
+  "changshi": {
+    "title": "常识页面",
+    "desc": "这里是常识页面的内容"
+  },
+  "mine": {
+    "title": "我的页面",
+    "desc": "这里是我的页面的内容",
+    "settings": "设置",
+    "about": "关于",
+    "feedback": "反馈"
+  },
+  "actions": {
+    "confirm": "确定",
+    "cancel": "取消",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除"
+  },
+  "messages": {
+    "success": "操作成功",
+    "failed": "操作失败",
+    "loading": "加载中..."
+  }
+}

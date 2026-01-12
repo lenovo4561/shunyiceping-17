@@ -1,0 +1,279 @@
+<template>
+  <div class="page">
+    <list class="list-container">
+      <!-- Header Section -->
+      <list-item type="header" class="header-item">
+        <stack class="top-banner" onclick="goToQingshangTest">
+          <image class="banner-bg" src="/assets/img/shouyedingbg.png"></image>
+          <div class="banner-content">
+            <image class="banner-title-img" src="/assets/img/qsdg.png"></image>
+          </div>
+        </stack>
+
+        <div class="section-header">
+          <image class="section-title-img" src="/assets/img/jctj.png"></image>
+          <image class="section-title-icon" src="/assets/img/yanjing.png"></image>
+        </div>
+      </list-item>
+
+      <!-- List Items -->
+      <block for="{{(index, item) in listData}}">
+        <list-item type="item" class="list-item">
+          <div class="item-card">
+            <image class="item-img" src="{{item.image}}"></image>
+            <div class="item-content">
+              <text class="item-title">{{item.title}}</text>
+              <text class="item-desc" if="{{item.desc}}">{{item.desc}}</text>
+              
+              <div class="item-footer">
+                <div class="fire-info">
+                  <image class="fire-icon" src="/assets/img/remenceping.png"></image>
+                  <text class="fire-text">{{item.count}} 人已测试</text>
+                </div>
+                <div class="item-btn" onclick="startTest" data-index="{{index}}">
+                  <image class="item-btn-text" src="/assets/img/lkcs.png"></image>
+                  <image class="item-btn-icon" src="/assets/img/yanjing3.png"></image>
+                </div>
+              </div>
+            </div>
+          </div>
+        </list-item>
+      </block>
+    </list>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+
+export default {
+  data: {
+    listData: [
+      {
+        title: '测一测你的"快递拆箱人格"',
+        desc: '',
+        count: 2580,
+        image: 'https://cdn.shijinzhuang.com/quick/shycp/cp/1.jpg'
+      },
+      {
+        title: '你的"奶茶点单人格"暴露了什么？',
+        desc: '',
+        count: 2580,
+        image: 'https://cdn.shijinzhuang.com/quick/shycp/cp/2.jpg'
+      },
+      {
+        title: '测一测你的"宅家充电人格"',
+        desc: '',
+        count: 2580,
+        image: 'https://cdn.shijinzhuang.com/quick/shycp/cp/3.jpg'
+      },
+      {
+        title: '你的"记账消费人格"是什么样？',
+        desc: '',
+        count: 2580,
+        image: 'https://cdn.shijinzhuang.com/quick/shycp/cp/4.jpg'
+      },
+      {
+        title: '测一测你的"拍照分享人格"',
+        desc: '',
+        count: 2580,
+        image: 'https://cdn.shijinzhuang.com/quick/shycp/cp/5.jpg'
+      }
+    ]
+  },
+  startTest(evt) {
+    // 获取data-index属性
+    const index = evt.target.attr.index
+    // 跳转到对应的答题页面，传入测评ID
+    router.push({
+      uri: 'pages/TestQuestions',
+      params: {
+        id: index
+      }
+    })
+  },
+  goToQingshangTest() {
+    router.push({
+      uri: 'pages/QingshangTest'
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.list-container {
+  flex: 1;
+}
+
+.header-item {
+  flex-direction: column;
+}
+
+/* Top Banner */
+.top-banner {
+  width: 100%;
+  height: 500px; 
+}
+
+.banner-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-content {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 40px;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-title-img {
+  width: 450px;
+  object-fit: contain;
+  margin-bottom: 30px;
+}
+
+.banner-btn {
+  background-color: #00e0ff; 
+  border-radius: 40px;
+  padding: 10px 30px;
+  flex-direction: row;
+  align-items: center;
+  height: 70px;
+}
+
+.banner-btn-text {
+  font-size: 28px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.btn-icon, .item-btn-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-left: 10px;
+}
+
+.section-title-icon {
+  height: 40px;
+  object-fit: contain;
+  margin-left: 10px;
+}
+
+/* Section Header */
+.section-header {
+  flex-direction: row;
+  align-items: center;
+  padding: 25px 30px;
+  background-color: #ffffff;
+  margin-top: -20px;
+  margin-left: 40px;
+  margin-right: 40px;
+  border-top-left-radius: 30px; 
+  border-top-right-radius: 30px;
+  position: relative;
+  z-index: 10;
+}
+
+.section-title-img {
+  height: 40px;
+  object-fit: contain;
+  margin-right: 10px;
+}
+
+/* List Item */
+.list-item {
+  background-color: #ffffff;
+  padding: 0 30px 30px 30px;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.item-card {
+  flex-direction: row;
+  width: 100%;
+  padding-bottom: 30px;
+  border-bottom-width: 1px;
+  border-bottom-color: #eeeeee;
+}
+
+.item-img {
+  width: 200px;
+  height: 200px;
+  border-radius: 20px;
+  object-fit: cover;
+  background-color: #eeeeee;
+  margin-right: 20px;
+}
+
+.item-content {
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.item-title {
+  font-size: 30px;
+  color: #333333;
+  lines: 2;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+
+.item-desc {
+  font-size: 24px;
+  color: #999999;
+  lines: 1;
+  text-overflow: ellipsis;
+  margin-top: 8px;
+}
+
+.item-footer {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.fire-info {
+  flex-direction: row;
+  align-items: center;
+}
+
+.fire-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 5px;
+  margin-top:-10px
+}
+
+.fire-text {
+  font-size: 22px;
+  color: #666666;
+}
+
+.item-btn {
+  background-color: #00e0ff;
+  border-radius: 28px;
+  padding: 8px 18px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item-btn-text {
+  height: 28px;
+  object-fit: contain;
+}
+</style>
+

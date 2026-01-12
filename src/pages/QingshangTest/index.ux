@@ -1,0 +1,595 @@
+<template>
+  <div class="page">
+    <stack class="header-section">
+      <image class="header-bg" src="/assets/img/xiangqing-bg.png"></image>
+      <div class="header-content">
+        <text class="page-title">情商（EQ）综合测评题</text>
+      </div>
+    </stack>
+
+    <div class="content-container">
+      <div class="intro-section" if="{{!testStarted}}">
+        <div class="intro-card">
+          <text class="section-title">测评说明</text>
+          <text class="intro-text">本测评共30道题，围绕情绪认知、情绪管理、人际沟通、共情能力、压力应对五大情商核心维度设计。请根据自身真实情况选择最符合的选项，无需过度思考，凭第一直觉作答即可。测评结果仅用于自我认知与成长参考，无绝对对错之分。</text>
+          
+          <text class="section-title">评分规则</text>
+          <text class="intro-text">1. 每道题有A、B、C、D四个选项，分别对应1分、2分、3分、4分；</text>
+          <text class="intro-text">2. 完成所有题目后，将各题得分相加，得出总分（总分范围：30-120分）；</text>
+          <text class="intro-text">3. 根据总分对应以下区间查看结论：30-59分（低情商水平）、60-89分（中等情商水平）、90-120分（高情商水平）。</text>
+          
+          <div class="start-btn" onclick="startTest">
+            <text class="start-btn-text">开始测评</text>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-section" if="{{testStarted && !testCompleted}}">
+        <div class="progress-bar">
+          <text class="progress-text">{{currentQuestion + 1}} / 30</text>
+        </div>
+
+        <div class="question-card">
+          <text class="question-number">第 {{currentQuestion + 1}} 题</text>
+          <text class="question-text">{{questions[currentQuestion].text}}</text>
+          
+          <div class="options-list">
+            <div class="option-item" for="{{(index, option) in questions[currentQuestion].options}}" 
+                 onclick="selectOption" data-score="{{option.score}}">
+              <text class="option-label">{{option.label}}</text>
+              <text class="option-text">{{option.text}}</text>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-section" if="{{testCompleted}}">
+        <div class="result-card">
+          <text class="result-title">测评结果</text>
+          <text class="total-score">总分：{{totalScore}} 分</text>
+          <text class="result-level">{{resultLevel}}</text>
+          <text class="result-content">{{resultText}}</text>
+          
+          <div class="restart-btn" onclick="restartTest">
+            <text class="restart-btn-text">重新测评</text>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <image class="bottom-decoration" src="/assets/img/yun.png"></image>
+  </div>
+</template>
+
+<script>
+export default {
+  data: {
+    testStarted: false,
+    testCompleted: false,
+    currentQuestion: 0,
+    totalScore: 0,
+    resultLevel: '',
+    resultText: '',
+    questions: [
+      {
+        text: '当你感到烦躁时，你能清晰说出自己烦躁的原因吗？',
+        options: [
+          { label: 'A', text: '完全说不出来，只觉得难受', score: 1 },
+          { label: 'B', text: '偶尔能说出来，但很模糊', score: 2 },
+          { label: 'C', text: '大部分时候能准确说出', score: 3 },
+          { label: 'D', text: '总能清晰定位烦躁的根源', score: 4 }
+        ]
+      },
+      {
+        text: '工作中被领导批评后，你会怎么做？',
+        options: [
+          { label: 'A', text: '情绪崩溃，无法专心工作', score: 1 },
+          { label: 'B', text: '心里很委屈，忍不住抱怨', score: 2 },
+          { label: 'C', text: '先平复情绪，再反思问题', score: 3 },
+          { label: 'D', text: '主动找领导沟通，明确改进方向', score: 4 }
+        ]
+      },
+      {
+        text: '朋友向你倾诉烦恼时，你通常的反应是？',
+        options: [
+          { label: 'A', text: '打断对方，说自己的类似经历', score: 1 },
+          { label: 'B', text: '默默听着，但不知道该回应什么', score: 2 },
+          { label: 'C', text: '偶尔回应，表达自己的理解', score: 3 },
+          { label: 'D', text: '认真倾听，适时共情并给出合理建议', score: 4 }
+        ]
+      },
+      {
+        text: '当你发现自己错怪了别人，你会？',
+        options: [
+          { label: 'A', text: '不好意思承认，假装没事', score: 1 },
+          { label: 'B', text: '心里愧疚，但不会主动道歉', score: 2 },
+          { label: 'C', text: '等对方提起时，再勉强道歉', score: 3 },
+          { label: 'D', text: '主动诚恳道歉，弥补自己的过失', score: 4 }
+        ]
+      },
+      {
+        text: '面对突发的紧急情况，你会？',
+        options: [
+          { label: 'A', text: '极度紧张，不知所措', score: 1 },
+          { label: 'B', text: '有点慌乱，需要别人提醒', score: 2 },
+          { label: 'C', text: '强迫自己冷静，尝试解决问题', score: 3 },
+          { label: 'D', text: '沉着冷静，快速制定应对方案', score: 4 }
+        ]
+      },
+      {
+        text: '你能快速察觉到身边人的情绪变化吗？',
+        options: [
+          { label: 'A', text: '完全察觉不到', score: 1 },
+          { label: 'B', text: '偶尔能察觉到，但不确定', score: 2 },
+          { label: 'C', text: '大部分时候能察觉到', score: 3 },
+          { label: 'D', text: '总能敏锐察觉到', score: 4 }
+        ]
+      },
+      {
+        text: '当你和同事因意见不合发生争执时，你会？',
+        options: [
+          { label: 'A', text: '据理力争，非要争出胜负', score: 1 },
+          { label: 'B', text: '生气地离开，不想再沟通', score: 2 },
+          { label: 'C', text: '暂时搁置争议，冷静后再谈', score: 3 },
+          { label: 'D', text: '耐心倾听对方观点，寻找共识', score: 4 }
+        ]
+      },
+      {
+        text: '你会主动调节自己的负面情绪吗？',
+        options: [
+          { label: 'A', text: '不会，任由负面情绪蔓延', score: 1 },
+          { label: 'B', text: '偶尔会尝试，但效果不好', score: 2 },
+          { label: 'C', text: '会尝试用听歌、散步等方式调节', score: 3 },
+          { label: 'D', text: '有成熟的调节方法，能快速走出负面情绪', score: 4 }
+        ]
+      },
+      {
+        text: '当别人对你产生误解时，你会？',
+        options: [
+          { label: 'A', text: '觉得委屈，不想解释', score: 1 },
+          { label: 'B', text: '很生气，和对方争辩', score: 2 },
+          { label: 'C', text: '等对方情绪平复后，再慢慢解释', score: 3 },
+          { label: 'D', text: '主动找机会澄清，化解误解', score: 4 }
+        ]
+      },
+      {
+        text: '你能接受别人对你的负面评价吗？',
+        options: [
+          { label: 'A', text: '完全不能接受，会很受伤', score: 1 },
+          { label: 'B', text: '很难接受，会质疑对方', score: 2 },
+          { label: 'C', text: '可以接受，但心里会不舒服', score: 3 },
+          { label: 'D', text: '坦然接受，从中吸取有用的建议', score: 4 }
+        ]
+      },
+      {
+        text: '当你需要拒绝别人的请求时，你会？',
+        options: [
+          { label: 'A', text: '不好意思拒绝，勉强答应', score: 1 },
+          { label: 'B', text: '直接拒绝，不考虑对方感受', score: 2 },
+          { label: 'C', text: '犹豫很久，最终还是拒绝', score: 3 },
+          { label: 'D', text: '委婉说明原因，礼貌拒绝', score: 4 }
+        ]
+      },
+      {
+        text: '你在公共场合发言时，情绪状态是？',
+        options: [
+          { label: 'A', text: '极度紧张，说不出话', score: 1 },
+          { label: 'B', text: '很紧张，声音发抖', score: 2 },
+          { label: 'C', text: '有点紧张，但能完成发言', score: 3 },
+          { label: 'D', text: '从容自信，流畅表达自己的观点', score: 4 }
+        ]
+      },
+      {
+        text: '当朋友取得成就时，你会？',
+        options: [
+          { label: 'A', text: '心里嫉妒，不想祝福', score: 1 },
+          { label: 'B', text: '表面祝福，心里不舒服', score: 2 },
+          { label: 'C', text: '真诚祝福，但有点羡慕', score: 3 },
+          { label: 'D', text: '真心为对方高兴，主动送上祝福', score: 4 }
+        ]
+      },
+      {
+        text: '当你感到压力很大时，你会？',
+        options: [
+          { label: 'A', text: '被压力压垮，无法应对', score: 1 },
+          { label: 'B', text: '不知道怎么缓解，硬扛着', score: 2 },
+          { label: 'C', text: '尝试向身边人求助', score: 3 },
+          { label: 'D', text: '主动寻找减压方法，合理释放压力', score: 4 }
+        ]
+      },
+      {
+        text: '你能准确判断别人的情绪需求吗？',
+        options: [
+          { label: 'A', text: '完全不能', score: 1 },
+          { label: 'B', text: '偶尔能', score: 2 },
+          { label: 'C', text: '大部分时候能', score: 3 },
+          { label: 'D', text: '总能准确判断', score: 4 }
+        ]
+      },
+      {
+        text: '当你和家人发生矛盾时，你会？',
+        options: [
+          { label: 'A', text: '大吵一架，发泄情绪', score: 1 },
+          { label: 'B', text: '冷战，不跟家人说话', score: 2 },
+          { label: 'C', text: '冷静后，和家人沟通解决', score: 3 },
+          { label: 'D', text: '主动让步，避免矛盾升级', score: 4 }
+        ]
+      },
+      {
+        text: '你会有意识地控制自己的脾气吗？',
+        options: [
+          { label: 'A', text: '不会，脾气上来就忍不住发作', score: 1 },
+          { label: 'B', text: '偶尔会控制，但经常失控', score: 2 },
+          { label: 'C', text: '大部分时候能控制', score: 3 },
+          { label: 'D', text: '总能很好地控制自己的脾气', score: 4 }
+        ]
+      },
+      {
+        text: '当你帮助了别人却没得到感谢时，你会？',
+        options: [
+          { label: 'A', text: '很生气，觉得自己白帮忙了', score: 1 },
+          { label: 'B', text: '心里不舒服，下次不再帮忙', score: 2 },
+          { label: 'C', text: '有点失落，但不会太在意', score: 3 },
+          { label: 'D', text: '帮助别人是自愿的，不期待回报', score: 4 }
+        ]
+      },
+      {
+        text: '你能快速适应新的人际环境吗？',
+        options: [
+          { label: 'A', text: '很难适应，会感到很孤独', score: 1 },
+          { label: 'B', text: '适应很慢，需要很长时间', score: 2 },
+          { label: 'C', text: '慢慢能适应，主动认识新朋友', score: 3 },
+          { label: 'D', text: '快速适应，轻松融入新环境', score: 4 }
+        ]
+      },
+      {
+        text: '当你发现自己的情绪影响到工作时，你会？',
+        options: [
+          { label: 'A', text: '继续被情绪左右，无法专注', score: 1 },
+          { label: 'B', text: '想控制但控制不住', score: 2 },
+          { label: 'C', text: '暂时停下工作，调节情绪', score: 3 },
+          { label: 'D', text: '立刻调整状态，不让情绪影响工作', score: 4 }
+        ]
+      },
+      {
+        text: '你会主动关心身边人的情绪状态吗？',
+        options: [
+          { label: 'A', text: '不会，只关注自己', score: 1 },
+          { label: 'B', text: '偶尔会，但很被动', score: 2 },
+          { label: 'C', text: '会关注熟悉的人的情绪', score: 3 },
+          { label: 'D', text: '经常主动关心身边人的情绪', score: 4 }
+        ]
+      },
+      {
+        text: '当你和别人发生误会时，你会先从自己身上找原因吗？',
+        options: [
+          { label: 'A', text: '不会，觉得都是别人的错', score: 1 },
+          { label: 'B', text: '很少会，更倾向于怪别人', score: 2 },
+          { label: 'C', text: '偶尔会反思自己', score: 3 },
+          { label: 'D', text: '会先反思自己，再考虑对方的问题', score: 4 }
+        ]
+      },
+      {
+        text: '你能在情绪激动时保持理性吗？',
+        options: [
+          { label: 'A', text: '完全不能，会被情绪支配', score: 1 },
+          { label: 'B', text: '很难保持，容易冲动行事', score: 2 },
+          { label: 'C', text: '努力保持理性，但偶尔会失控', score: 3 },
+          { label: 'D', text: '总能保持理性，不被情绪左右', score: 4 }
+        ]
+      },
+      {
+        text: '你会用积极的心态看待挫折吗？',
+        options: [
+          { label: 'A', text: '不会，遇到挫折就消沉', score: 1 },
+          { label: 'B', text: '很难积极，会抱怨命运不公', score: 2 },
+          { label: 'C', text: '偶尔能积极面对', score: 3 },
+          { label: 'D', text: '总能把挫折当成成长的机会', score: 4 }
+        ]
+      },
+      {
+        text: '当你需要向别人求助时，你会？',
+        options: [
+          { label: 'A', text: '不好意思开口，宁愿自己硬扛', score: 1 },
+          { label: 'B', text: '犹豫很久，才勉强开口', score: 2 },
+          { label: 'C', text: '会开口求助，但有点自卑', score: 3 },
+          { label: 'D', text: '坦然开口，清晰说明自己的需求', score: 4 }
+        ]
+      },
+      {
+        text: '你能记住身边人的重要日子（如生日）吗？',
+        options: [
+          { label: 'A', text: '完全记不住', score: 1 },
+          { label: 'B', text: '偶尔能记住几个', score: 2 },
+          { label: 'C', text: '能记住重要的人的日子', score: 3 },
+          { label: 'D', text: '大部分身边人的重要日子都能记住', score: 4 }
+        ]
+      },
+      {
+        text: '当你在团队中被忽视时，你会？',
+        options: [
+          { label: 'A', text: '很失落，不再主动参与团队活动', score: 1 },
+          { label: 'B', text: '心里不舒服，抱怨团队', score: 2 },
+          { label: 'C', text: '主动表现自己，让别人注意到', score: 3 },
+          { label: 'D', text: '平常心对待，做好自己的本职工作', score: 4 }
+        ]
+      },
+      {
+        text: '你会主动学习提升自己的沟通能力吗？',
+        options: [
+          { label: 'A', text: '不会，觉得没必要', score: 1 },
+          { label: 'B', text: '偶尔会想，但不会行动', score: 2 },
+          { label: 'C', text: '有机会的话会学习', score: 3 },
+          { label: 'D', text: '会主动找资料、参加培训学习', score: 4 }
+        ]
+      },
+      {
+        text: '当你发现身边人有困难时，你会？',
+        options: [
+          { label: 'A', text: '假装没看见，不想帮忙', score: 1 },
+          { label: 'B', text: '心里想帮忙，但不知道怎么帮', score: 2 },
+          { label: 'C', text: '主动询问，提供力所能及的帮助', score: 3 },
+          { label: 'D', text: '尽自己最大的努力帮助对方', score: 4 }
+        ]
+      },
+      {
+        text: '你对自己的情绪状态有清晰的认知吗？',
+        options: [
+          { label: 'A', text: '完全没有，很模糊', score: 1 },
+          { label: 'B', text: '偶尔有，不太清晰', score: 2 },
+          { label: 'C', text: '大部分时候有清晰认知', score: 3 },
+          { label: 'D', text: '总能清晰认知自己的情绪状态', score: 4 }
+        ]
+      }
+    ]
+  },
+  startTest() {
+    this.testStarted = true
+  },
+  selectOption(evt) {
+    const score = parseInt(evt.target.attr.score)
+    this.totalScore += score
+    
+    if (this.currentQuestion < 29) {
+      this.currentQuestion++
+    } else {
+      this.showResult()
+    }
+  },
+  showResult() {
+    this.testCompleted = true
+    
+    if (this.totalScore >= 30 && this.totalScore <= 59) {
+      this.resultLevel = '低情商水平'
+      this.resultText = '处于这一区间的你，在情绪认知和管理方面存在较大提升空间。你很难清晰察觉自己的情绪根源，面对负面情绪时往往无法有效调节，容易被情绪支配做出冲动的行为。在人际交往中，你不太能察觉到他人的情绪变化，沟通时容易忽略对方感受，遇到矛盾和误解时，习惯用逃避、争吵等消极方式应对，难以建立良好的人际关系。面对压力和挫折时，你容易陷入消沉，缺乏积极的应对心态。不过不必过于焦虑，情商是可以通过后天培养提升的。建议你从基础的情绪认知开始，每天花一点时间反思自己的情绪状态，记录情绪变化的原因；在与人沟通前，先换位思考，尝试理解对方的立场和感受；遇到问题时，先冷静3分钟再做出反应，避免被情绪左右。'
+    } else if (this.totalScore >= 60 && this.totalScore <= 89) {
+      this.resultLevel = '中等情商水平'
+      this.resultText = '你具备基本的情绪认知和管理能力，大部分时候能察觉到自己的情绪变化，也能通过简单的方式调节负面情绪。在人际交往中，你能关注到身边人的情绪状态，与熟悉的人沟通时较为顺畅，遇到矛盾时，会尝试用理性的方式解决，不会轻易被情绪带偏。面对压力和挫折时，你有一定的抗压能力，不会轻易被击垮，能在短暂调整后重新投入。但你在情商的某些维度上仍有提升空间，比如在陌生的人际环境中，可能会感到不适应；面对尖锐的批评或误解时，偶尔会情绪失控；在拒绝别人或向别人求助时，不够坦然自信。建议你针对性地提升薄弱环节，比如主动尝试融入新环境，锻炼自己的社交适应能力；学习更系统的情绪调节方法，如冥想、深呼吸等，增强情绪控制能力；在沟通中，勇敢表达自己的真实需求，同时学会更委婉地拒绝他人。'
+    } else if (this.totalScore >= 90 && this.totalScore <= 120) {
+      this.resultLevel = '高情商水平'
+      this.resultText = '你拥有出色的情绪管理和人际沟通能力，是身边人的"情绪稳定器"。你能敏锐察觉到自己的情绪变化，准确定位情绪根源，并能通过成熟的方式快速调节负面情绪，始终保持理性和从容。在人际交往中，你具备极强的共情能力，能精准判断他人的情绪需求，倾听时专注耐心，沟通时真诚得体，既能清晰表达自己的观点，也能尊重他人的意见。遇到矛盾和误解时，你能主动沟通、换位思考，轻松化解冲突，建立并维护良好的人际关系。面对压力和挫折时，你能以积极乐观的心态看待，将其视为成长的机会，具备强大的抗压能力和心理韧性。你的高情商让你在工作和生活中都能游刃有余，深受身边人的信任和喜爱。建议你继续保持这种良好的状态，同时可以尝试将自己的经验分享给身边的人，在帮助他人的过程中，进一步提升自己的情商水平；也可以挑战更复杂的人际场景，不断突破自己的舒适区，让情商成为你人生的重要助力。'
+    }
+  },
+  restartTest() {
+    this.testStarted = false
+    this.testCompleted = false
+    this.currentQuestion = 0
+    this.totalScore = 0
+    this.resultLevel = ''
+    this.resultText = ''
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.header-section {
+  width: 100%;
+  height: 400px;
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-content {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 42px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
+.content-container {
+  flex: 1;
+  flex-direction: column;
+  padding: 30px;
+}
+
+.intro-section {
+  flex: 1;
+  flex-direction: column;
+}
+
+.intro-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 40px;
+  flex-direction: column;
+}
+
+.section-title {
+  font-size: 32px;
+  color: #333333;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.intro-text {
+  font-size: 26px;
+  color: #666666;
+  line-height: 40px;
+  margin-bottom: 15px;
+}
+
+.start-btn {
+  background-color: #00e0ff;
+  border-radius: 50px;
+  height: 90px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.start-btn-text {
+  font-size: 32px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.test-section {
+  flex: 1;
+  flex-direction: column;
+}
+
+.progress-bar {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.progress-text {
+  font-size: 28px;
+  color: #00e0ff;
+  font-weight: bold;
+}
+
+.question-card {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 40px;
+  flex-direction: column;
+}
+
+.question-number {
+  font-size: 28px;
+  color: #00e0ff;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.question-text {
+  font-size: 30px;
+  color: #333333;
+  font-weight: bold;
+  line-height: 45px;
+  margin-bottom: 40px;
+}
+
+.options-list {
+  flex-direction: column;
+}
+
+.option-item {
+  background-color: #f8f8f8;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.option-label {
+  font-size: 28px;
+  color: #00e0ff;
+  font-weight: bold;
+  margin-right: 15px;
+  width: 50px;
+}
+
+.option-text {
+  flex: 1;
+  font-size: 26px;
+  color: #666666;
+  line-height: 38px;
+}
+
+.result-section {
+  flex: 1;
+  flex-direction: column;
+}
+
+.result-card {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 40px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-title {
+  font-size: 38px;
+  color: #333333;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.total-score {
+  font-size: 48px;
+  color: #00e0ff;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.result-level {
+  font-size: 34px;
+  color: #333333;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.result-content {
+  font-size: 26px;
+  color: #666666;
+  line-height: 42px;
+  margin-bottom: 40px;
+}
+
+.restart-btn {
+  background-color: #00e0ff;
+  border-radius: 50px;
+  height: 90px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.restart-btn-text {
+  font-size: 32px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.bottom-decoration {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+</style>

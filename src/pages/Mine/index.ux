@@ -2,16 +2,16 @@
   <div class="page">
     <!-- 顶部背景区域 -->
     <stack class="header-section">
-      <image class="header-bg" src="/assets/img/wode-bg.png"></image>
+      <image class="header-bg" src="/assets/img/wode-bg-4.png"></image>
       
       <!-- 用户信息 -->
       <div class="user-info">
-        <image class="avatar" src="/assets/img/logo.png"></image>
+        <image class="avatar" src="/assets/img/tx.png"></image>
         <text class="username">郑文锦</text>
       </div>
     </stack>
 
-    <!-- 其他服务区域 -->
+    <!-- 其他服务区域（叠加到顶部背景） -->
     <div class="content-section">
       <text class="section-title">其他服务</text>
       
@@ -27,7 +27,7 @@
         </div>
 
         <!-- 隐私政策 -->
-        <div class="service-item" onclick="openPrivacy">
+        <div class="service-item last-item" onclick="openPrivacy">
           <div class="item-left">
             <image class="item-icon" src="/assets/img/yinsizhengce-1.png"></image>
             <text class="item-text">隐私政策</text>
@@ -74,7 +74,7 @@ export default {
 /* 顶部背景区域 */
 .header-section {
   width: 100%;
-  height: 500px;
+  height: 600px;
 }
 
 .header-bg {
@@ -90,13 +90,14 @@ export default {
   align-items: center;
   padding-left: 50px;
   margin-top: 200px;
+  margin-bottom: 130px;
 }
 
 .avatar {
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 200px;
   border-radius: 60px;
-  border: 4px solid #ffffff;
+  object-fit: cover;
 }
 
 .username {
@@ -106,12 +107,13 @@ export default {
   margin-left: 30px;
 }
 
-/* 内容区域 */
+/* 内容区域（叠加到顶部背景） */
 .content-section {
-  flex: 1;
   flex-direction: column;
+  margin: -80px 30px 0 30px;
   padding: 40px 30px;
-  padding-bottom: 200px;
+  background-color: #ffffff;
+  border-radius: 20px;
 }
 
 .section-title {
@@ -119,6 +121,7 @@ export default {
   font-weight: bold;
   color: #000000;
   margin-bottom: 30px;
+  margin-left:40px
 }
 
 /* 服务列表 */
@@ -133,11 +136,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 35px 30px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom-width: 1px;
+  border-bottom-color: #f0f0f0;
 }
 
-.service-item:last-child {
-  border-bottom: none;
+.last-item {
+  border-bottom-width: 0px;
 }
 
 .item-left {
@@ -147,8 +151,8 @@ export default {
 }
 
 .item-icon {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   margin-right: 20px;
 }
 
@@ -158,7 +162,8 @@ export default {
 }
 
 .arrow-icon {
-  width: 24px;
-  height: 24px;
+  width: 50px;
+  height: 80px;
+  object-fit: contain;
 }
 </style>

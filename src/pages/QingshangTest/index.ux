@@ -395,7 +395,7 @@ export default {
 .header-bg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  resize-mode: cover;
 }
 
 .header-content {

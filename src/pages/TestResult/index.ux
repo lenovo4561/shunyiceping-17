@@ -14,19 +14,19 @@
 
     <!-- 结果内容 -->
     <div class="content-container">
-      <text class="result-title">{{resultData.title}}</text>
+      <text class="result-title">{{resultTitle}}</text>
       <div class="result-scroll">
-        <text class="result-content">{{resultData.content}}</text>
+        <text class="result-content">{{resultContent}}</text>
       </div>
     </div>
 
     <!-- 底部按钮 -->
     <div class="bottom-buttons">
-      <div class="action-btn secondary" onclick="goBack">
-        <text class="secondary-text">返回首页</text>
+      <div class="action-btn secondary" onclick="goshouye">
+        <image class="btn-text-img" src="/assets/img/fhsy.png"></image>
       </div>
       <div class="action-btn primary" onclick="testAgain">
-        <text class="btn-text">重新测评</text>
+        <image class="btn-text-img" src="/assets/img/cxcp.png"></image>
         <image class="btn-icon" src="/assets/img/yanjing3.png"></image>
       </div>
     </div>
@@ -39,25 +39,28 @@ import { questionsData as shiyeData } from '../../assets/data/shiye.js'
 import { questionsData as aiqingData } from '../../assets/data/aiqing.js'
 import { questionsData as yuanfenData } from '../../assets/data/yuanfen.js'
 import { questionsData as xinggeData } from '../../assets/data/xingge.js'
+import { questionsData as qingshangData } from '../../assets/data/qingshang.js'
+import { questionsData as tuijianData } from '../../assets/data/jiangcaituijian.js'
 
 export default {
   data: {
     category: '',
     testIndex: 0,
+    score: 0,
     testTitle: '',
     totalScore: 0,
-    resultData: {
-      title: '',
-      content: ''
-    },
+    resultTitle: '',
+    resultContent: '',
     questionsData: null
   },
 
-  onInit(query) {
-    // 获取传入的参数
-    this.category = query.category || 'aiqing'
-    this.testIndex = parseInt(query.testIndex || 0)
-    this.totalScore = parseInt(query.score || 0)
+  onInit() {
+    // 获取传入的参数（从路由params中获取）
+    this.category = this.category || 'aiqing'
+    this.testIndex = parseInt(this.testIndex || 0)
+    this.totalScore = parseInt(this.score || 0)
+    
+    console.log('TestResult onInit:', this.category, this.testIndex, this.totalScore)
     
     // 根据分类加载对应的数据
     switch(this.category) {
@@ -73,23 +76,36 @@ export default {
       case 'xingge':
         this.questionsData = xinggeData
         break
+      case 'qingshang':
+        this.questionsData = qingshangData
+        break
+      case 'tuijian':
+        this.questionsData = tuijianData
+        break
       default:
         this.questionsData = aiqingData
     }
     
     const testData = this.questionsData[this.testIndex]
+    console.log('testData:', testData)
     if (testData) {
       this.testTitle = testData.title
+      console.log('results:', testData.results)
       this.calculateResult(testData.results)
     }
   },
 
   calculateResult(results) {
     // 根据总分找到对应的结果区间
+    console.log('calculateResult - totalScore:', this.totalScore)
+    console.log('calculateResult - results:', results)
     for (let i = 0; i < results.length; i++) {
       const [min, max] = results[i].range
+      console.log('checking range:', min, max, 'score:', this.totalScore)
       if (this.totalScore >= min && this.totalScore <= max) {
-        this.resultData = results[i]
+        this.resultTitle = results[i].title
+        this.resultContent = results[i].content
+        console.log('matched result:', this.resultTitle, this.resultContent)
         break
       }
     }
@@ -99,15 +115,55 @@ export default {
     router.back()
   },
 
+  goshouye() {
+    // 根据category判断返回位置
+    // 如果是从分类页面进入的测评，返回分类页面；如果是从首页进入的，返回首页
+    const fromFenlei = ['shiye', 'aiqing', 'yuanfen', 'xingge'].indexOf(this.category) !== -1
+    
+    // 清空路由栈
+    router.clear()
+    
+    // 根据来源跳转到对应页面
+    if (fromFenlei) {
+      // 从分类页进入，跳转到Main页并切换到分类tab
+      router.push({
+        uri: 'pages/Main',
+        params: {
+          tabIndex: 1
+        }
+      })
+    } else {
+      // 从首页进入，跳转到Main页
+      router.push({
+        uri: 'pages/Main'
+      })
+    }
+  },
+
   testAgain() {
-    // 重新测试，跳转到答题页面
-    router.replace({
-      uri: 'pages/TestQuestions',
-      params: {
-        category: this.category,
-        testIndex: this.testIndex
-      }
-    })
+    // 重新测评：直接替换到新的题目页实例，确保从第1题开始
+    console.log('testAgain - category:', this.category, 'testIndex:', this.testIndex)
+    const restartNonce = Date.now()
+
+    if (this.category === 'tuijian') {
+      router.replace({
+        uri: 'pages/TestQuestions',
+        params: {
+          id: this.testIndex,
+          category: 'tuijian',
+          restartNonce
+        }
+      })
+    } else {
+      router.replace({
+        uri: 'pages/TestQuestions',
+        params: {
+          category: this.category,
+          testIndex: this.testIndex,
+          restartNonce
+        }
+      })
+    }
   }
 }
 </script>
@@ -167,7 +223,6 @@ export default {
 
 /* 内容容器 */
 .content-container {
-  flex: 1;
   flex-direction: column;
   padding: 50px 40px;
   margin-top: -250px;
@@ -188,7 +243,6 @@ export default {
 }
 
 .result-scroll {
-  flex: 1;
   flex-direction: column;
 }
 
@@ -201,9 +255,12 @@ export default {
 
 /* 底部按钮 */
 .bottom-buttons {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   flex-direction: row;
   padding: 30px 40px 50px;
-  background-color: #ffffff;
 }
 
 .action-btn {
@@ -220,26 +277,19 @@ export default {
   margin-right: 20px;
 }
 
-.secondary-text {
-  color: #000000;
-  font-size: 32px;
-  font-weight: bold;
-  margin-right: 0;
-}
-
 .primary {
   background-color: #000000;
 }
 
-.btn-text {
-  font-size: 32px;
-  font-weight: bold;
-  margin-right: 10px;
-  color: #ffffff;
+.btn-text-img {
+  height: 40px;
+  object-fit: contain;
 }
 
 .btn-icon {
-  width: 36px;
-  height: 36px;
+  width: 50px;
+  height: 40px;
+  margin-left: 15px;
+  object-fit: contain;
 }
 </style>

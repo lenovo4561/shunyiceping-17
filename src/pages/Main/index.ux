@@ -71,6 +71,11 @@ export default {
   },
   onInit() {
     console.log('Main page initialized')
+    // 如果有传入tabIndex参数，则切换到对应tab
+    if (this.tabIndex !== undefined && this.tabIndex !== null) {
+      this.currentIndex = parseInt(this.tabIndex)
+      console.log('Main page - switch to tab:', this.currentIndex)
+    }
     this.initUser()
   },
   changeTab(e) {

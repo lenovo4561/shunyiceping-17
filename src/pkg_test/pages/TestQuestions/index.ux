@@ -1,0 +1,381 @@
+<template>
+  <div class="page">
+    <!-- 返回按钮 -->
+    <div class="back-btn" onclick="goBack">
+      <image class="back-icon" src="/pkg_test/assets/img/back.png"></image>
+    </div>
+
+    <!-- 标题栏 -->
+    <div class="title-bar">
+      <text class="header-title">{{testTitle}}</text>
+    </div>
+
+    <!-- 顶部背景 -->
+    <stack class="top-header">
+      <image class="header-bg" src="/pkg_test/assets/img/xiangqing-bg.png"></image>
+    </stack>
+
+    <!-- 题目容器 -->
+    <div class="content-container">
+      <!-- 题号显示 -->
+      <div class="question-number">
+        <text class="number-text">第 </text>
+        <text class="number-highlight">{{currentQuestion + 1}}</text>
+        <text class="number-text"> /{{totalQuestions}} 题</text>
+      </div>
+
+      <!-- 题目内容 -->
+      <div class="question-box">
+        <text class="question-text">{{questionData.question}}</text>
+      </div>
+
+      <!-- 选项列表 -->
+      <div class="options-container">
+        <block for="{{(index, option) in questionData.options}}">
+          <div class="{{selectedOption === index ? 'option-item selected' : 'option-item'}}" 
+               onclick="selectOption(index)">
+            <text class="option-text">{{option.text}}</text>
+          </div>
+        </block>
+      </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-btn-container">
+      <div class="{{selectedOption !== -1 ? 'next-btn active' : 'next-btn'}}" 
+           onclick="nextQuestion">
+        <image class="btn-text-img" src="/pkg_test/assets/img/xyt.png"></image>
+        <image class="btn-icon" src="/pkg_test/assets/img/yanjing3.png"></image>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+import { questionsData as shiyeData } from '../../assets/data/shiye.js'
+import { questionsData as aiqingData } from '../../assets/data/aiqing.js'
+import { questionsData as yuanfenData } from '../../assets/data/yuanfen.js'
+import { questionsData as xinggeData } from '../../assets/data/xingge.js'
+import { questionsData as qingshangData } from '../../assets/data/qingshang.js'
+import { questionsData as tuijianData } from '../../assets/data/jiangcaituijian.js'
+
+export default {
+  data: {
+    category: '',
+    testIndex: 0,
+    id: -1,
+    restartNonce: 0,
+    lastRestartNonce: 0,
+    testTitle: '',
+    currentQuestion: 0,
+    selectedOption: -1,
+    answers: [],
+    questionData: {
+      question: '',
+      options: []
+    },
+    questionsData: null,
+    totalQuestions: 5
+  },
+
+  onInit() {
+    const nonce = this.restartNonce !== undefined && this.restartNonce !== null ? String(this.restartNonce) : ''
+    this.restartNonce = nonce
+    console.log('TestQuestions onInit - 进入，restartNonce=', this.restartNonce)
+    this.lastRestartNonce = this.restartNonce
+    this.resetState()
+    this.prepareQuestions()
+  },
+
+  onShow() {
+    const nonce = this.restartNonce !== undefined && this.restartNonce !== null ? String(this.restartNonce) : ''
+    if (nonce !== this.lastRestartNonce) {
+      console.log('TestQuestions onShow - 检测到新的 restartNonce=', nonce)
+      this.restartNonce = nonce
+      this.lastRestartNonce = nonce
+      this.resetState()
+      this.prepareQuestions()
+    } else if (!this.questionData || !this.questionData.question) {
+      // 如果数据为空，重新加载
+      console.log('TestQuestions onShow - 数据为空，重新加载')
+      this.prepareQuestions()
+    }
+  },
+
+  resetState() {
+    this.currentQuestion = 0
+    this.selectedOption = -1
+    this.answers = []
+    this.totalQuestions = 5
+    this.questionData = {
+      question: '',
+      options: []
+    }
+    this.questionsData = null
+    console.log('TestQuestions resetState - 已重置至第1题')
+  },
+
+  prepareQuestions() {
+    const restartInfo = `id=${this.id}, category=${this.category}, testIndex=${this.testIndex}`
+    console.log('TestQuestions prepareQuestions - 原始参数:', restartInfo)
+
+    if (this.category === 'tuijian' || (this.id !== undefined && this.id !== -1 && this.id !== '-1' && this.id !== '')) {
+      this.id = parseInt(this.id)
+      this.questionsData = tuijianData
+      this.testIndex = this.id
+      this.category = 'tuijian'
+      console.log('TestQuestions prepareQuestions - 使用精彩推荐数据，idx=', this.testIndex)
+    } else {
+      this.category = this.category || 'aiqing'
+      this.testIndex = parseInt(this.testIndex || 0)
+
+      switch (this.category) {
+        case 'shiye':
+          this.questionsData = shiyeData
+          break
+        case 'aiqing':
+          this.questionsData = aiqingData
+          break
+        case 'yuanfen':
+          this.questionsData = yuanfenData
+          break
+        case 'xingge':
+          this.questionsData = xinggeData
+          break
+        case 'qingshang':
+          this.questionsData = qingshangData
+          break
+        default:
+          this.questionsData = aiqingData
+      }
+
+      console.log('TestQuestions prepareQuestions - 分类模式 category=', this.category, 'index=', this.testIndex)
+    }
+
+    if (!this.questionsData) {
+      console.error('TestQuestions prepareQuestions - questionsData 为空')
+      return
+    }
+
+    const testData = this.questionsData[this.testIndex]
+    console.log('TestQuestions prepareQuestions - testData:', testData)
+
+    if (testData && testData.title) {
+      this.testTitle = testData.title
+      this.totalQuestions = testData.questions.length
+      this.loadQuestion()
+      console.log('TestQuestions prepareQuestions - 已加载', this.totalQuestions, '题')
+    } else {
+      console.error('TestQuestions prepareQuestions - 无法找到测评数据 testIndex=', this.testIndex)
+    }
+  },
+  loadQuestion() {
+    const testData = this.questionsData[this.testIndex]
+    
+    if (!testData || !testData.questions) {
+      console.error('❌ loadQuestion: testData 无效', testData)
+      return
+    }
+    if (testData && testData.questions[this.currentQuestion]) {
+      this.questionData = testData.questions[this.currentQuestion]
+    }
+  },
+
+  selectOption(index) {
+    this.selectedOption = index
+  },
+
+  nextQuestion() {
+    // 如果没有选择答案，不处理
+    if (this.selectedOption === -1) {
+      return
+    }
+
+    // 保存答案
+    const testData = this.questionsData[this.testIndex]
+    const selectedScore = testData.questions[this.currentQuestion].options[this.selectedOption].score
+    this.answers.push(selectedScore)
+
+    // 判断是否是最后一题
+    if (this.currentQuestion === this.totalQuestions - 1) {
+      // 计算总分并跳转到结果页
+      const totalScore = this.answers.reduce((sum, score) => sum + score, 0)
+      router.push({
+        uri: '/pkg_test/pages/TestResult',
+        params: {
+          category: this.category,
+          testIndex: this.testIndex,
+          score: totalScore
+        }
+      })
+    } else {
+      // 下一题
+      this.currentQuestion++
+      this.selectedOption = -1
+      this.loadQuestion()
+    }
+  },
+
+  goBack() {
+    router.back()
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+/* 返回按钮 */
+.back-btn {
+  position: fixed;
+  left: 7px;
+  top: 7px;
+  width: 16px;
+  height: 16px;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+.back-icon {
+  width: 9px;
+  height: 9px;
+}
+
+/* 标题栏 */
+.title-bar {
+  position: fixed;
+  left: 28px;
+  right: 28px;
+  top: 7px;
+  height: 16px;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.header-title {
+  font-size: 8px;
+  color: #000000;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 顶部背景 */
+.top-header {
+  width: 100%;
+  height: 93px;
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 内容容器 */
+.content-container {
+  flex: 1;
+  flex-direction: column;
+  padding: 9px;
+  margin-top: -14px;
+  background-color: #ffffff;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+}
+
+/* 题号显示 */
+.question-number {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 9px;
+}
+
+.number-text {
+  font-size: 6px;
+  color: #999999;
+}
+
+.number-highlight {
+  font-size: 11px;
+  color: #000;
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+/* 题目内容 */
+.question-box {
+  margin-bottom: 9px;
+}
+
+.question-text {
+  font-size: 9px;
+  color: #000000;
+  font-weight: bold;
+  line-height: 14px;
+}
+
+/* 选项列表 */
+.options-container {
+  flex-direction: column;
+  flex: 1;
+}
+
+.option-item {
+  padding: 7px 8px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+}
+
+.selected {
+  background-color: #e6fbff;
+  border-color: #00e0ff;
+}
+
+.option-text {
+  font-size: 6px;
+  color: #333333;
+  line-height: 10px;
+}
+
+/* 底部按钮 */
+.bottom-btn-container {
+  padding: 7px 9px 12px;
+  background-color: #ffffff;
+}
+
+.next-btn {
+  width: 100%;
+  height: 23px;
+  background-color: #cccccc;
+  border-radius: 12px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.active {
+  background-color: #00e0ff;
+}
+
+.btn-text-img {
+  height: 9px;
+  object-fit: contain;
+  margin-right: 2px;
+}
+
+.btn-icon {
+  width: 14px;
+  height: 11px;
+  object-fit: contain;
+}
+</style>

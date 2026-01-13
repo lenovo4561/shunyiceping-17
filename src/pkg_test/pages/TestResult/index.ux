@@ -1,0 +1,295 @@
+<template>
+  <div class="page">
+    <!-- 返回按钮 -->
+    <div class="back-btn" onclick="goBack">
+      <image class="back-icon" src="/pkg_test/assets/img/back.png"></image>
+    </div>
+
+    <!-- 顶部标题栏 -->
+    <stack class="top-header">
+      <image class="header-bg" src="/pkg_test/assets/img/cepingjielin-bg.png"></image>
+      <div class="header-content">
+      </div>
+    </stack>
+
+    <!-- 结果内容 -->
+    <div class="content-container">
+      <text class="result-title">{{resultTitle}}</text>
+      <div class="result-scroll">
+        <text class="result-content">{{resultContent}}</text>
+      </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-buttons">
+      <div class="action-btn secondary" onclick="goshouye">
+        <image class="btn-text-img" src="/pkg_test/assets/img/fhsy.png"></image>
+      </div>
+      <div class="action-btn primary" onclick="testAgain">
+        <image class="btn-text-img" src="/pkg_test/assets/img/cxcp.png"></image>
+        <image class="btn-icon" src="/pkg_test/assets/img/yanjing3.png"></image>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+import { questionsData as shiyeData } from '../../assets/data/shiye.js'
+import { questionsData as aiqingData } from '../../assets/data/aiqing.js'
+import { questionsData as yuanfenData } from '../../assets/data/yuanfen.js'
+import { questionsData as xinggeData } from '../../assets/data/xingge.js'
+import { questionsData as qingshangData } from '../../assets/data/qingshang.js'
+import { questionsData as tuijianData } from '../../assets/data/jiangcaituijian.js'
+
+export default {
+  data: {
+    category: '',
+    testIndex: 0,
+    score: 0,
+    testTitle: '',
+    totalScore: 0,
+    resultTitle: '',
+    resultContent: '',
+    questionsData: null
+  },
+
+  onInit() {
+    // 获取传入的参数（从路由params中获取）
+    this.category = this.category || 'aiqing'
+    this.testIndex = parseInt(this.testIndex || 0)
+    this.totalScore = parseInt(this.score || 0)
+    
+    console.log('TestResult onInit:', this.category, this.testIndex, this.totalScore)
+    
+    // 根据分类加载对应的数据
+    switch(this.category) {
+      case 'shiye':
+        this.questionsData = shiyeData
+        break
+      case 'aiqing':
+        this.questionsData = aiqingData
+        break
+      case 'yuanfen':
+        this.questionsData = yuanfenData
+        break
+      case 'xingge':
+        this.questionsData = xinggeData
+        break
+      case 'qingshang':
+        this.questionsData = qingshangData
+        break
+      case 'tuijian':
+        this.questionsData = tuijianData
+        break
+      default:
+        this.questionsData = aiqingData
+    }
+    
+    const testData = this.questionsData[this.testIndex]
+    console.log('testData:', testData)
+    if (testData) {
+      this.testTitle = testData.title
+      console.log('results:', testData.results)
+      this.calculateResult(testData.results)
+    }
+  },
+
+  calculateResult(results) {
+    // 根据总分找到对应的结果区间
+    console.log('calculateResult - totalScore:', this.totalScore)
+    console.log('calculateResult - results:', results)
+    for (let i = 0; i < results.length; i++) {
+      const [min, max] = results[i].range
+      console.log('checking range:', min, max, 'score:', this.totalScore)
+      if (this.totalScore >= min && this.totalScore <= max) {
+        this.resultTitle = results[i].title
+        this.resultContent = results[i].content
+        console.log('matched result:', this.resultTitle, this.resultContent)
+        break
+      }
+    }
+  },
+
+  goBack() {
+    router.back()
+  },
+
+  goshouye() {
+    // 根据category判断返回位置
+    // 如果是从分类页面进入的测评，返回分类页面；如果是从首页进入的，返回首页
+    const fromFenlei = ['shiye', 'aiqing', 'yuanfen', 'xingge'].indexOf(this.category) !== -1
+    
+    // 清空路由栈
+    router.clear()
+    
+    // 根据来源跳转到对应页面
+    if (fromFenlei) {
+      // 从分类页进入，跳转到Main页并切换到分类tab
+      router.push({
+        uri: '/pkg_test/pages/Main',
+        params: {
+          tabIndex: 1
+        }
+      })
+    } else {
+      // 从首页进入，跳转到Main页
+      router.push({
+        uri: '/pkg_test/pages/Main'
+      })
+    }
+  },
+
+  testAgain() {
+    // 重新测评：直接替换到新的题目页实例，确保从第1题开始
+    console.log('testAgain - category:', this.category, 'testIndex:', this.testIndex)
+    const restartNonce = Date.now()
+
+    if (this.category === 'tuijian') {
+      router.replace({
+        uri: '/pkg_test/pages/TestQuestions',
+        params: {
+          id: this.testIndex,
+          category: 'tuijian',
+          restartNonce
+        }
+      })
+    } else {
+      router.replace({
+        uri: '/pkg_test/pages/TestQuestions',
+        params: {
+          category: this.category,
+          testIndex: this.testIndex,
+          restartNonce
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+/* 返回按钮 */
+.back-btn {
+  position: fixed;
+  left: 7px;
+  top: 7px;
+  width: 16px;
+  height: 16px;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  z-index: 100;
+}
+
+.back-icon {
+  width: 9px;
+  height: 9px;
+}
+
+/* 顶部标题栏 */
+.top-header {
+  width: 100%;
+  height: 174px;
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.header-content {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  padding-top: 12px;
+  padding-left: 32px;
+}
+
+.header-title {
+  font-size: 11px;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* 内容容器 */
+.content-container {
+  flex-direction: column;
+  padding: 12px 9px;
+  margin-top: -58px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 9px;
+  margin-bottom: 7px;
+}
+
+.result-title {
+  font-size: 12px;
+  color: #000000;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 9px;
+  margin-top: 5px;
+}
+
+.result-scroll {
+  flex-direction: column;
+}
+
+.result-content {
+  font-size: 7px;
+  color: #333333;
+  line-height: 12px;
+}
+
+
+/* 底部按钮 */
+.bottom-buttons {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  flex-direction: row;
+  padding: 7px 9px 12px;
+}
+
+.action-btn {
+  flex: 1;
+  height: 23px;
+  border-radius: 12px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.secondary {
+  background-color: #00d2eb;
+  margin-right: 5px;
+}
+
+.primary {
+  background-color: #000000;
+}
+
+.btn-text-img {
+  height: 9px;
+  object-fit: contain;
+}
+
+.btn-icon {
+  width: 12px;
+  height: 9px;
+  margin-left: 3px;
+  object-fit: contain;
+}
+</style>

@@ -38,8 +38,8 @@
   ],
   "template/official": "demo-template",
   "config": {
-    "logLevel": "debug",
-    "designWidth": 1080
+    "logLevel": "off",
+    "designWidth": 250
   },
   "router": {
     "entry": "pages/Splash",
@@ -47,44 +47,50 @@
       "pages/Splash": {
         "component": "index"
       },
-      "pages/Web": {
+      "pkg_test/pages/Web": {
         "component": "index"
       },
-      "pages/Main": {
+      "pkg_test/pages/Main": {
         "component": "index"
       },
-      "pages/Ceping": {
+      "pkg_test/pages/Ceping": {
         "component": "index"
       },
-      "pages/Fenlei": {
+      "pkg_test/pages/Fenlei": {
         "component": "index"
       },
-      "pages/Changshi": {
+      "pkg_test/pages/Changshi": {
         "component": "index"
       },
-      "pages/Mine": {
+      "pkg_test/pages/Mine": {
         "component": "index"
       },
-      "pages/Demo": {
+      "pkg_test/pages/Demo": {
         "component": "index"
       },
-      "pages/DemoDetail": {
+      "pkg_test/pages/DemoDetail": {
         "component": "index"
       },
-      "pages/TestQuestions": {
+      "pkg_test/pages/TestQuestions": {
         "component": "index"
       },
-      "pages/TestResult": {
+      "pkg_test/pages/TestResult": {
         "component": "index"
       },
-      "pages/ChangshiDetail": {
+      "pkg_test/pages/ChangshiDetail": {
         "component": "index"
       },
-      "pages/QingshangTest": {
+      "pkg_test/pages/QingshangTest": {
         "component": "index"
       }
     }
   },
+  "subpackages": [
+    {
+      "name": "pkg_test",
+      "resource": "pkg_test"
+    }
+  ],
   "display": {
     "titleBarBackgroundColor": "#f2f2f2",
     "titleBarTextColor": "#414141",
@@ -94,46 +100,46 @@
         "titleBar": false,
         "menu": false
       },
-      "pages/Web": {
+      "pkg_test/pages/Web": {
         "titleBarText": "顺意测评",
         "menu": false
       },
-      "pages/Main": {
+      "pkg_test/pages/Main": {
         "titleBar": false,
         "menu": false
       },
-      "pages/Ceping": {
+      "pkg_test/pages/Ceping": {
         "titleBarText": "测评",
         "menu": false
       },
-      "pages/Fenlei": {
+      "pkg_test/pages/Fenlei": {
         "titleBarText": "分类",
         "menu": false
       },
-      "pages/Changshi": {
+      "pkg_test/pages/Changshi": {
         "titleBarText": "常识",
         "menu": false
       },
-      "pages/Mine": {
+      "pkg_test/pages/Mine": {
         "titleBarText": "我的",
         "menu": false
       },
-      "pages/Demo": {
+      "pkg_test/pages/Demo": {
         "titleBarText": "快应用示例模版",
         "menu": false
       },
-      "pages/DemoDetail": {
+      "pkg_test/pages/DemoDetail": {
         "titleBarText": "详情页"
       },
-      "pages/TestQuestions": {
+      "pkg_test/pages/TestQuestions": {
         "titleBar": false,
         "menu": false
       },
-      "pages/TestResult": {
+      "pkg_test/pages/TestResult": {
         "titleBar": false,
         "menu": false
       },
-      "pages/ChangshiDetail": {
+      "pkg_test/pages/ChangshiDetail": {
         "titleBar": false,
         "menu": false
       }

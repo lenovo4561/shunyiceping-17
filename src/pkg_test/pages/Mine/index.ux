@@ -1,0 +1,169 @@
+<template>
+  <div class="page">
+    <!-- 顶部背景区域 -->
+    <stack class="header-section">
+      <image class="header-bg" src="/pkg_test/assets/img/wode-bg-4.png"></image>
+      
+      <!-- 用户信息 -->
+      <div class="user-info">
+        <image class="avatar" src="/pkg_test/assets/img/tx.png"></image>
+        <text class="username">郑文锦</text>
+      </div>
+    </stack>
+
+    <!-- 其他服务区域（叠加到顶部背景） -->
+    <div class="content-section">
+      <text class="section-title">其他服务</text>
+      
+      <!-- 服务列表 -->
+      <div class="service-list">
+        <!-- 用户协议 -->
+        <div class="service-item" onclick="openAgreement">
+          <div class="item-left">
+            <image class="item-icon" src="/pkg_test/assets/img/yonghuxieyi.png"></image>
+            <text class="item-text">用户协议</text>
+          </div>
+          <image class="arrow-icon" src="/pkg_test/assets/img/jiantou.png"></image>
+        </div>
+
+        <!-- 隐私政策 -->
+        <div class="service-item last-item" onclick="openPrivacy">
+          <div class="item-left">
+            <image class="item-icon" src="/pkg_test/assets/img/yinsizhengce-1.png"></image>
+            <text class="item-text">隐私政策</text>
+          </div>
+          <image class="arrow-icon" src="/pkg_test/assets/img/jiantou.png"></image>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+
+export default {
+  openAgreement() {
+    router.push({
+      uri: '/pkg_test/pages/Web',
+      params: {
+        url: 'https://api.51dsp.cn/index/agreement.do?pn=com.shunyicp.jsstarchoice',
+        title: '用户协议'
+      }
+    })
+  },
+  openPrivacy() {
+    router.push({
+      uri: '/pkg_test/pages/Web',
+      params: {
+        url: 'https://api.51dsp.cn/index/privacy.do?pn=com.shunyicp.jsstarchoice',
+        title: '隐私政策'
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+  height: 100%;
+}
+
+/* 顶部背景区域 */
+.header-section {
+  width: 100%;
+  height: 139px;
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 用户信息 */
+.user-info {
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 12px;
+  margin-top: 46px;
+  margin-bottom: 30px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.username {
+  font-size: 9px;
+  font-weight: bold;
+  color: #000000;
+  margin-left: 7px;
+}
+
+/* 内容区域（叠加到顶部背景） */
+.content-section {
+  flex-direction: column;
+  margin: -19px 7px 0 7px;
+  padding: 9px 7px;
+  background-color: #ffffff;
+  border-radius: 5px;
+}
+
+.section-title {
+  font-size: 7px;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 7px;
+  margin-left:9px
+}
+
+/* 服务列表 */
+.service-list {
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 5px;
+}
+
+.service-item {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 7px;
+  border-bottom-width: 0px;
+  border-bottom-color: #f0f0f0;
+}
+
+.last-item {
+  border-bottom-width: 0px;
+}
+
+.item-left {
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+}
+
+.item-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+}
+
+.item-text {
+  font-size: 7px;
+  color: #333333;
+}
+
+.arrow-icon {
+  width: 12px;
+  height: 19px;
+  object-fit: contain;
+}
+</style>

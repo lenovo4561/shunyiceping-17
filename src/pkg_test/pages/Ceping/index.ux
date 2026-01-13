@@ -1,0 +1,306 @@
+<template>
+  <div class="page">
+    <list class="list-container">
+      <!-- Header Section -->
+      <list-item type="header" class="header-item">
+        <stack class="top-banner" onclick="goToQingshangTest">
+          <image class="banner-bg" src="/pkg_test/assets/img/shouyedingbg.png"></image>
+          <div class="banner-content">
+            <image class="banner-title-img" src="/pkg_test/assets/img/qsdg.png"></image>
+          </div>
+        </stack>
+
+        <div class="section-header">
+          <image class="section-title-img" src="/pkg_test/assets/img/jctj.png"></image>
+          <image class="section-title-icon" src="/pkg_test/assets/img/yanjing.png"></image>
+        </div>
+      </list-item>
+
+      <!-- List Items -->
+      <block for="{{(index, item) in listData}}">
+        <list-item type="item" class="list-item">
+          <div class="item-card {{index === listData.length - 1 ? 'last-item' : ''}}">
+            <image class="item-img" src="{{item.image}}"></image>
+            <div class="item-content">
+              <text class="item-title">{{item.title}}</text>
+              <text class="item-desc" if="{{item.desc}}">{{item.desc}}</text>
+              
+              <div class="item-footer">
+                <div class="fire-info">
+                  <image class="fire-icon" src="/pkg_test/assets/img/remenceping.png"></image>
+                  <text class="fire-text">{{item.count}} 人已测试</text>
+                </div>
+                <div class="item-btn" onclick="startTest" data-index="{{index}}">
+                  <image class="item-btn-text" src="/pkg_test/assets/img/lkcs.png"></image>
+                  <image class="item-btn-icon" src="/pkg_test/assets/img/yanjing3.png"></image>
+                </div>
+              </div>
+            </div>
+          </div>
+        </list-item>
+      </block>
+    </list>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+import { questionsData } from '../../assets/data/jiangcaituijian.js'
+
+export default {
+  data: {
+    listData: []
+  },
+  
+  onInit() {
+    // 从 jiangcaituijian.js 动态生成列表数据
+    const images = [
+      'https://cdn.shijinzhuang.com/quick/shycp/cp/3.jpg',
+      'https://cdn.shijinzhuang.com/quick/shycp/cp/2.jpg',
+      'https://cdn.shijinzhuang.com/quick/shycp/cp/4.jpg',
+      'https://cdn.shijinzhuang.com/quick/shycp/cp/1.jpg',
+      'https://cdn.shijinzhuang.com/quick/shycp/cp/5.jpg'
+    ]
+    
+    this.listData = Object.keys(questionsData).map((key, index) => {
+      return {
+        title: questionsData[key].title,
+        desc: '',
+        count: 2580,
+        image: images[index] || images[0]
+      }
+    })
+    
+    console.log('精彩推荐列表数据:', this.listData)
+  },
+  startTest(evt) {
+    // 获取data-index属性（快应用会将 data-index 转换为 dataIndex）
+    const index = evt.target.attr.dataIndex
+    const testId = parseInt(index)
+    
+    console.log('✓ startTest - index:', index, 'testId:', testId)
+    
+    if (isNaN(testId)) {
+      console.error('❌ testId 是 NaN，无法跳转')
+      return
+    }
+    
+    const testData = questionsData[testId]
+    if (!testData) {
+      console.error('❌ questionsData[' + testId + '] 不存在')
+      return
+    }
+    
+    console.log('✓ 对应测评标题:', testData.title)
+    
+    // 跳转到对应的答题页面，传入测评ID
+    router.push({
+      uri: '/pkg_test/pages/TestQuestions',
+      params: {
+        id: testId,
+        category: 'tuijian'
+      }
+    })
+  },
+  goToQingshangTest() {
+    // 直接跳转到测试题目页面
+    router.push({
+      uri: '/pkg_test/pages/TestQuestions',
+      params: {
+        category: 'qingshang',
+        testIndex: 0
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.list-container {
+  flex: 1;
+}
+
+.header-item {
+  flex-direction: column;
+}
+
+/* Top Banner */
+.top-banner {
+  width: 100%;
+  height: 116px; 
+}
+
+.banner-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-content {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 9px;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-title-img {
+  width: 104px;
+  object-fit: contain;
+  margin-bottom: 7px;
+}
+
+.banner-btn {
+  background-color: #00e0ff; 
+  border-radius: 9px;
+  padding: 2px 7px;
+  flex-direction: row;
+  align-items: center;
+  height: 16px;
+}
+
+.banner-btn-text {
+  font-size: 6px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.btn-icon, .item-btn-icon {
+  width: 7px;
+  height: 7px;
+  object-fit: contain;
+  margin-left: 2px;
+}
+
+.section-title-icon {
+  height: 9px;
+  object-fit: contain;
+  margin-left: 2px;
+}
+
+/* Section Header */
+.section-header {
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 7px;
+  background-color: #ffffff;
+  margin-top: -5px;
+  margin-left: 9px;
+  margin-right: 9px;
+  border-top-left-radius: 7px; 
+  border-top-right-radius: 7px;
+  position: relative;
+  z-index: 10;
+}
+
+.section-title-img {
+  height: 9px;
+  object-fit: contain;
+  margin-right: 2px;
+}
+
+/* List Item */
+.list-item {
+  background-color: #ffffff;
+  padding: 0 7px 7px 7px;
+  margin-left: 9px;
+  margin-right: 9px;
+}
+
+.item-card {
+  flex-direction: row;
+  width: 100%;
+  padding-bottom: 7px;
+  border-bottom-width: 0px;
+  border-bottom-color: #eeeeee;
+}
+
+.item-card.last-item {
+  border-bottom-width: 0px;
+}
+
+.item-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 5px;
+  object-fit: cover;
+  background-color: #eeeeee;
+  margin-right: 5px;
+}
+
+.item-content {
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.item-title {
+  font-size: 7px;
+  color: #333333;
+  lines: 2;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+
+.item-desc {
+  font-size: 6px;
+  color: #999999;
+  lines: 1;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.item-footer {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.fire-info {
+  flex-direction: row;
+  align-items: center;
+}
+
+.fire-icon {
+  width: 6px;
+  height: 6px;
+  margin-right: 1px;
+  margin-top:-2px
+}
+
+.fire-text {
+  font-size: 5px;
+  color: #666666;
+}
+
+.item-btn {
+  background-color: #00e0ff;
+  border-radius: 6px;
+  padding: 2px 4px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-btn-text {
+  height: 6px;
+  object-fit: contain;
+}
+
+.item-btn-icon {
+  width: 7px;
+  height: 7px;
+  object-fit: contain;
+  margin-left: 2px;
+}
+</style>
+

@@ -1,11 +1,11 @@
 <template>
   <div class="splash-container">
     <!-- Background Image - Full Screen -->
-    <image class="bg-img" src="/assets/img/loading-bg.png"></image>
+    <image class="bg-img" src="/pkg_test/assets/img/loading-bg.png"></image>
 
     <!-- Center Logo -->
     <div class="center-section">
-      <image class="logo-img" src="/assets/img/logo.png"></image>
+      <image class="logo-img" src="/pkg_test/assets/img/logo.png"></image>
     </div>
 
     <!-- Privacy Modal -->
@@ -96,7 +96,7 @@ export default {
   },
   openPrivacy() {
     router.push({
-      uri: '/pages/Web',
+      uri: '/pkg_test/pages/Web',
       params: {
         url: 'https://api.51dsp.cn/index/privacy.do?pn=com.shunyicp.jsstarchoice',
         title: '隐私政策'
@@ -105,7 +105,7 @@ export default {
   },
   openAgreement() {
     router.push({
-      uri: '/pages/Web',
+      uri: '/pkg_test/pages/Web',
       params: {
         url: 'https://api.51dsp.cn/index/agreement.do?pn=com.shunyicp.jsstarchoice',
         title: '用户协议'
@@ -126,7 +126,7 @@ export default {
   },
   navigateToHome() {
     router.replace({
-      uri: '/pages/Main'
+      uri: '/pkg_test/pages/Main'
     })
   }
 }
@@ -163,19 +163,19 @@ export default {
 }
 
 .logo-img {
-  width: 420px;
-  height: 420px;
+  width: 97px;
+  height: 97px;
   object-fit: contain;
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .app-name {
-  font-size: 48px;
+  font-size: 11px;
   color: #333333;
   font-weight: bold;
 }
 
-/* 弹窗样式 - 适配 1080px */
+/* 弹窗样式 - 适配 250px */
 .modal_overlay {
   position: fixed;
   top: 0;
@@ -189,29 +189,29 @@ export default {
 }
 
 .modal_content {
-  width: 740px;
+  width: 171px;
   background-color: #ffffff;
-  border-radius: 32px;
-  padding: 48px;
+  border-radius: 7px;
+  padding: 11px;
   flex-direction: column;
   align-items: center;
 }
 
 .modal_title {
-  font-size: 48px;
+  font-size: 11px;
   font-weight: bold;
   color: #333333;
-  margin-bottom: 32px;
+  margin-bottom: 7px;
 }
 
 .modal_text_wrapper {
-  margin-bottom: 48px;
+  margin-bottom: 11px;
 }
 
 .modal_text {
-  font-size: 36px;
+  font-size: 8px;
   color: #666666;
-  line-height: 52px;
+  line-height: 12px;
 }
 
 .link {
@@ -226,32 +226,32 @@ export default {
 
 .btn_primary {
   width: 100%;
-  height: 100px;
+  height: 23px;
   background: linear-gradient(90deg, #4a90e2 0%, #357abd 100%);
-  border-radius: 48px;
+  border-radius: 11px;
   justify-content: center;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .btn_text_primary {
   color: #ffffff;
-  font-size: 40px;
+  font-size: 9px;
   font-weight: bold;
 }
 
 .btn_secondary {
   width: 100%;
-  height: 100px;
+  height: 23px;
   background-color: #f5f7fa;
-  border-radius: 48px;
+  border-radius: 11px;
   justify-content: center;
   align-items: center;
 }
 
 .btn_text_secondary {
   color: #4a90e2;
-  font-size: 40px;
+  font-size: 9px;
   font-weight: bold;
 }
 </style>

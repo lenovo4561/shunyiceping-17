@@ -71,7 +71,9 @@ export default {
     console.log('Changshi组件 refreshData 被调用')
   },
   goToDetail(evt) {
-    const index = evt.target.attr.dataIndex
+    // 使用 currentTarget 确保获取到绑定事件的元素，而不是子元素（如图片或文字）
+    const index = evt.currentTarget.attr.dataIndex
+    console.log('✓ goToDetail - index:', index)
     router.push({
       uri: '/pkg_test/pages/ChangshiDetail',
       params: {
@@ -138,7 +140,7 @@ export default {
 .item-content {
   flex-direction: row;
   justify-content: space-between;
-  padding: 7px 0;
+  padding: 10px 0;
 }
 
 .item-text-col {
@@ -150,10 +152,10 @@ export default {
 }
 
 .item-title {
-  font-size: 7px;
+  font-size: 10px;
   color: #333333;
   font-weight: bold;
-  line-height: 10px;
+  line-height: 14px;
   lines: 2;
   text-overflow: ellipsis;
 }
@@ -165,22 +167,21 @@ export default {
 }
 
 .info-icon {
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   object-fit: contain;
   margin-right: 2px;
-  margin-bottom: 3px;
 }
 
 .info-text {
-  font-size: 6px;
+  font-size: 8px;
   color: #999999;
 }
 
 .item-image {
-  width: 51px;
-  height: 37px;
-  border-radius: 4px;
+  width: 65px;
+  height: 48px;
+  border-radius: 5px;
   object-fit: cover;
 }
 

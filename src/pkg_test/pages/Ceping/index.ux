@@ -75,7 +75,8 @@ export default {
   },
   startTest(evt) {
     // 获取data-index属性（快应用会将 data-index 转换为 dataIndex）
-    const index = evt.target.attr.dataIndex
+    // 使用 currentTarget 确保获取到绑定事件的元素，而不是子元素（如图片）
+    const index = evt.currentTarget.attr.dataIndex
     const testId = parseInt(index)
     
     console.log('✓ startTest - index:', index, 'testId:', testId)
@@ -162,7 +163,7 @@ export default {
   padding: 2px 7px;
   flex-direction: row;
   align-items: center;
-  height: 16px;
+  height: 20px;
 }
 
 .banner-btn-text {
@@ -208,7 +209,7 @@ export default {
 /* List Item */
 .list-item {
   background-color: #ffffff;
-  padding: 0 7px 7px 7px;
+  padding: 0 7px 10px 7px;
   margin-left: 9px;
   margin-right: 9px;
 }
@@ -216,7 +217,8 @@ export default {
 .item-card {
   flex-direction: row;
   width: 100%;
-  padding-bottom: 7px;
+  padding-top: 5px;
+  padding-bottom: 10px;
   border-bottom-width: 0px;
   border-bottom-color: #eeeeee;
 }
@@ -243,11 +245,12 @@ export default {
 }
 
 .item-title {
-  font-size: 7px;
+  font-size: 10px;
   color: #333333;
   lines: 2;
   text-overflow: ellipsis;
   font-weight: bold;
+  margin-top:-4px
 }
 
 .item-desc {
@@ -271,36 +274,38 @@ export default {
 }
 
 .fire-icon {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   margin-right: 1px;
-  margin-top:-2px
+  margin-top:0px
 }
 
 .fire-text {
-  font-size: 5px;
+  font-size: 8px;
   color: #666666;
 }
 
 .item-btn {
   background-color: #00e0ff;
-  border-radius: 6px;
-  padding: 2px 4px;
+  border-radius: 15px;
+  padding: 5px 7px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 }
 
 .item-btn-text {
-  height: 6px;
+  height: 8px;
   object-fit: contain;
+  pointer-events: none;
 }
 
 .item-btn-icon {
-  width: 7px;
-  height: 7px;
+  width: 12px;
+  height: 12px;
   object-fit: contain;
   margin-left: 2px;
+  pointer-events: none;
 }
 </style>
 
